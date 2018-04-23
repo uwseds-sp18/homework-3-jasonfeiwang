@@ -1,18 +1,21 @@
 #!/home/fei/anaconda3/bin/python
 
+import os 
 import sys
 import pandas as pd
 import sqlite3
 from urllib.request import pathname2url
 
+
+# Do not show traceback statements
 sys.tracebacklimit=0
 
 def create_dataframe(inputDb):
-    try:
-        dburi = 'file:{}?mode=rw'.format(pathname2url(inputDb))
-        conn = sqlite3.connect(dburi, uri=True)
 
-        df = pd.read_sql_query("""
+    if(os.path.exists(inputDb) != True):
+        raise ValueError("Invalid path to a database.")
+    else:
+        sql = """
         select video_id, category_id, 'us' as language from USvideos
         union all 
         select video_id, category_id, 'gb' as language from GBvideos 
@@ -23,11 +26,6 @@ def create_dataframe(inputDb):
         union all 
         select video_id, category_id, 'ca' as language from CAvideos
         """
-        , conn)
-        return(df) 
-    except Exception as ex:
-        if type(ex).__name__ == 'OperationalError':
-            #raise ValueError("Invalid path to a database.")
-            return(ex)
-
-
+        conn = sqlite3.connect(inputDb)
+        df = pd.read_sql_query(sql, conn)
+    return(df)

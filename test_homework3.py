@@ -1,6 +1,7 @@
 from homework3 import create_dataframe 
 import unittest 
 
+
 class TestHomework3(unittest.TestCase):
     # test whether the dataframe returned contains the right column names
     def test_column_names(self):
@@ -23,8 +24,9 @@ class TestHomework3(unittest.TestCase):
     
     # test whether the correct exception is generated when an invalid path is provided.
     def test_exception_type(self):
-        ex = create_dataframe('wrong_path')
-        self.assertTrue(type(ex).__name__ == 'OperationalError')
+       	with self.assertRaises(ValueError):
+            create_dataframe('wrongDatabasePath')
+
 
 if __name__ == '__main__':
     unittest.main()
